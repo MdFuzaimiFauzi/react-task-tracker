@@ -9,8 +9,7 @@ import MainLayout from './layouts/MainLayout.jsx';
 import HomePage from './pages/HomePage.jsx';
 import TasksPage from './pages/TasksPage.jsx';
 import TaskPage, { taskLoader } from './pages/TaskPage.jsx';
-import AddTaskPage from './pages/AddTaskPage.jsx';
-import EditTaskPage from './pages/EditTaskPage.jsx';
+import TaskForm from './components/TaskForm.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
 // Add a new task
@@ -76,14 +75,14 @@ const router = createBrowserRouter(
 
       <Route
         path="/add-task"
-        element={<AddTaskPage addTaskSubmit={addTask} />}
+        element={<TaskForm onSubmit={addTask} mode="add" />}
       />
 
       <Route
-  path="/tasks/edit/:id"
-  element={<EditTaskPage updateTaskSubmit={updateTask} />}
-  loader={taskLoader}
-/>
+      path="/tasks/edit/:id"
+      element={<TaskForm onSubmit={updateTask} mode="edit"/>}
+      loader={taskLoader}
+      />
 
       <Route
         path="*"

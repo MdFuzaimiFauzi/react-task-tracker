@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import './TaskForm.css';
 
 const TaskForm = ({
-  initialTask = null,
   onSubmit,
   submitting = false,
+  mode
 }) => {
-  const isEditMode = Boolean(initialTask);
+  const navigate = useNavigate();
+  const loadedTask = useLoaderData();
+
+  const isEditMode = mode == 'edit';
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -15,19 +20,20 @@ const TaskForm = ({
   const [priority, setPriority] = useState('Medium');
   const [status, setStatus] = useState('Not Started Yet');
   const [dueDate, setDueDate] = useState('');
+  
 
   useEffect(() => {
-    if (!initialTask) {
+    if (!isEditMode || !loadedTask) {
       return;
     }
 
-    setTitle(initialTask.title ?? '');
-    setDescription(initialTask.description ?? '');
-    setCategory(initialTask.category ?? 'Development');
-    setPriority(initialTask.priority ?? 'Medium');
-    setStatus(initialTask.status ?? 'Not Started Yet');
-    setDueDate(initialTask.dueDate ?? '');
-  }, [initialTask]);
+    setTitle(loadedTask.title ?? '');
+    setDescription(loadedTask.description ?? '');
+    setCategory(loadedTask.category ?? 'Development');
+    setPriority(loadedTask.priority ?? 'Medium');
+    setStatus(loadedTask.status ?? 'Not Started Yet');
+    setDueDate(loadedTask.dueDate ?? '');
+  }, [isEditMode, loadedTask]);
 
   const submitForm = async (event) => {
     event.preventDefault();
@@ -41,7 +47,25 @@ const TaskForm = ({
       dueDate,
     };
 
-    await onSubmit(taskData);
+
+    if (isEditMode) 
+      taskData.id =loadedTask.id;
+
+    try {
+      await onSubmit(taskData);
+
+      if (isEditMode) {
+        toast.success('Task updated successfully!');
+      } else {
+        toast.success('Task added successfully!');
+      }
+
+      navigate('/tasks');
+      
+    }
+    catch (error) {
+      console.error('Failed to save task:', error);
+    }
   };
 
   return (
@@ -66,7 +90,7 @@ const TaskForm = ({
                 id="title"
                 name="title"
                 className="form-control"
-                placeholder="Example: Complete React Task Tracker"
+                placeholder="Example: Adding New Feature"
                 required
                 value={title}
                 onChange={(event) => {
@@ -88,7 +112,7 @@ const TaskForm = ({
                 name="description"
                 className="form-control"
                 rows="5"
-                placeholder="Describe what needs to be completed"
+                placeholder="Describe the task"
                 required
                 value={description}
                 onChange={(event) => {
