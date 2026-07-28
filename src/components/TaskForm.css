@@ -1,0 +1,124 @@
+.add-task-page {
+  min-height: calc(100vh - 80px);
+  padding: 3rem 1rem;
+  background-color: #eff6ff;
+}
+
+.add-task-container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.add-task-card {
+  padding: 2rem;
+
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.add-task-title {
+  margin-top: 0;
+  margin-bottom: 2rem;
+
+  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  color: #334155;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 1rem;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
+}
+
+textarea.form-control {
+  min-height: 130px;
+  resize: vertical;
+}
+
+select.form-control {
+  cursor: pointer;
+}
+
+.add-task-button {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 5px;
+  padding: 0.75rem 1rem;
+
+  background-color: #6366f1;
+  border: none;
+  border-radius: 0.5rem;
+
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.add-task-button:hover:not(:disabled) {
+  background-color: #4f46e5;
+  transform: translateY(-1px);
+}
+
+.add-task-button:disabled {
+  background-color: #a5b4fc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .add-task-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .add-task-card {
+    padding: 1.25rem;
+  }
+
+  .add-task-title {
+    font-size: 1.7rem;
+  }
+}

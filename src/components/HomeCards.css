@@ -1,0 +1,99 @@
+.home-cards-section {
+    padding: 16px 0;
+}
+
+.home-cards-container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.home-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+}
+
+.home-card {
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.developer-card {
+    background-color: #f3f4f6;
+}
+
+.designer-card {
+    background-color: #3B6E82;
+}
+
+.home-card-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.home-card-description {
+    margin-top: 8px;
+    font-size: 16px;
+    color: #111827;
+}
+
+.home-card-button {
+    display: inline-block;
+    padding: 8px 16px;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.home-card-button:hover {
+    transform: translateY(-1px);
+}
+
+.developer-button {
+    background-color: #000000;
+}
+
+.developer-button:hover {
+    background-color: #374151;
+}
+
+.employer-button {
+    background-color: #6366f1;
+}
+
+.employer-button:hover {
+    background-color: #4f4635;
+}
+
+@media (min-width: 768px) {
+    .home-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (prefers-color-scheme: dark) {
+  .developer-card {
+    background-color: #1f2937;
+  }
+
+  .employer-card {
+    background-color: #312e81;
+  }
+
+  .home-card-title {
+    color: #f9fafb;
+  }
+
+  .home-card-description {
+    color: #d1d5db;
+  }
+}

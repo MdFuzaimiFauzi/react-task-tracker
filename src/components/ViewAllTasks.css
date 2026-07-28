@@ -1,0 +1,33 @@
+
+.view-all-tasks{
+    display:flex;
+    justify-content: center;
+    align-items:center;
+    padding: 20px 20px;
+}
+
+
+.view-all-tasks-button{
+    display: inline-block;
+    padding: 10px 10px;
+    border-radius: 10px;
+    background-color: #6366f1;
+    color: white;
+    font-size: 16px;
+    font-weight: 300;
+    text-decoration: none; /* remove underline for link*/
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.view-all-tasks-button:hover{
+    background-color: #3033C9;
+}
+
+.view-all-tasks-button:focus-visible {
+    outline: 3px solid rgba(56, 129, 172, 0.35);
+    outline-offset: 2px;
+
+}

@@ -1,0 +1,10 @@
+.spinner-container {
+  grid-column: 1 / -1;
+
+  width: 100%;
+  min-height: 60vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

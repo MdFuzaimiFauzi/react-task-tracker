@@ -1,0 +1,15 @@
+{
+  "tasks": [
+    {
+      "title": "test task",
+      "description": "test",
+      "category": "Personal",
+      "priority": "Medium",
+      "status": "Pending",
+      "dueDate": "2026-06-06",
+      "createdAt": "2026-07-27",
+      "id": "vPnie3E-xNo"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

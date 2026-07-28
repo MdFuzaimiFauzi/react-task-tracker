@@ -1,0 +1,65 @@
+.task-listings {
+  background-color: #eff6ff;
+  padding: 15px 15px;
+}
+
+.task-listings-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.task-listings-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+
+  color: #6366f1;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.task-listings-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.task-listings-state {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.task-listings-error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.task-listings-empty {
+  margin: 0;
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .task-listings-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .task-listings-container {
+    max-width: 1024px;
+  }
+
+  .task-listings-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
