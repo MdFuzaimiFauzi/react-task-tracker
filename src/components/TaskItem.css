@@ -179,6 +179,13 @@
     transform 0.2s ease;
 }
 
+.check-button {
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+
+}
+
 .task-item-button:hover {
   background-color: #4f46e5;
   transform: translateY(-1px);

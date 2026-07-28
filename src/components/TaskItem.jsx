@@ -13,6 +13,7 @@ import './Buttons.css';
 
 const TaskItem = ({ task }) => {
     const navigate = useNavigate();
+  const [currentStat, setCurrentStat] = useState(task.status);
   const [showDescription, setShowDescription] = useState(false);
 
   const openTask = () => {
@@ -61,6 +62,36 @@ const TaskItem = ({ task }) => {
     });
   };
 
+  const checkedEvent = async (taskId) => {
+    console.log('TASK completed: ',task.id)
+
+    const updatedTask = {
+      ...task,
+      status: 'Completed',
+    };
+
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method : `PATCH`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: 'Completed',
+        }),
+      });
+
+      if(!response.ok) {
+          throw new Error('Failed to update the task');
+      }
+
+      setCurrentStat('Completed')
+
+    } catch (error) {
+      console.error('Error updating task: ',error);
+    }
+  };
+
   return (
     
     <article
@@ -84,11 +115,23 @@ const TaskItem = ({ task }) => {
             </span>
 
             <span
-              className={`task-status task-status-${statusClass}`}
-            >
-              {getStatusIcon()}
-              {task.status}
+              className={`task-status task-status-${currentStat.toLowerCase()}`}>
+              {getStatusIcon(currentStat)}
+              {currentStat}
             </span>
+            
+            {currentStat != 'Completed' && (
+              <button type="button" className="check-button" 
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        checkedEvent(task.id)
+                      }}
+              >
+                ✓
+              </button>
+
+            )}
+
           </div>
 
           <h3 className="task-item-title">
