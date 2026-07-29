@@ -33,9 +33,16 @@
 
 .task-item-badges {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.task-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
 }
 
 .task-priority,
@@ -83,8 +90,7 @@
 }
 
 .task-item-title {
-  margin: 0;
-
+  margin-bottom: 0;
   color: #1e293b;
   font-size: 1.25rem;
   line-height: 1.75rem;
@@ -189,6 +195,20 @@
 .task-item-button:hover {
   background-color: #4f46e5;
   transform: translateY(-1px);
+}
+
+.archive-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #374151;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.archive-button:hover {
+  background-color: #1f2937;
 }
 
 @media (min-width: 768px) {

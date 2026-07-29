@@ -12,10 +12,10 @@ import './TaskItem.css';
 import './Buttons.css';
 
 const TaskItem = ({ task }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [currentStat, setCurrentStat] = useState(task.status);
   const [showDescription, setShowDescription] = useState(false);
-
+  const [isArchived, setIsArchived] = useState(task.archived ?? false);
   const openTask = () => {
     navigate(`/tasks/${task.id}`);
   };
@@ -62,10 +62,10 @@ const TaskItem = ({ task }) => {
     });
   };
 
-  const checkedEvent = async (taskId) => {
+  const checkEvent = async (taskId) => {
     console.log('TASK completed: ',task.id)
 
-    const updatedTask = {
+    const checkedEvent = {
       ...task,
       status: 'Completed',
     };
@@ -91,6 +91,39 @@ const TaskItem = ({ task }) => {
       console.error('Error updating task: ',error);
     }
   };
+
+  const archiveEvent = async (taskId) => {
+    console.log('TASK archived: ',task.id)
+
+    const archivedTask = {
+      ...task,
+      archived: true,
+    }
+
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: `PATCH`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          archived: true,
+        }),
+      })
+
+      if (!response.ok){
+        throw new Error('Failed to archive the task')
+      }
+      setIsArchived(true)
+    }
+    catch (error) {
+      console.error('Error archiving task: ',error);
+    }
+  }
+
+  if (isArchived)
+    return null;
+  
 
   return (
     
@@ -120,18 +153,25 @@ const TaskItem = ({ task }) => {
               {currentStat}
             </span>
             
-            {currentStat != 'Completed' && (
-              <button type="button" className="check-button" 
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        checkedEvent(task.id)
-                      }}
-              >
-                ✓
-              </button>
+            <div className="task-item-actions">
+              {currentStat !== 'Completed' && (
+                <button type="button" className="check-button" 
+                        onClick={(event) => {event.stopPropagation();
+                          checkEvent(task.id)
+                        }}
+                >
+                  ✓
+                </button>
 
-            )}
-
+              )}
+            
+                <button type="button" className="archive-button"
+                        onClick={(event) => {event.stopPropagation();
+                          archiveEvent(task.id)
+                        }}>
+                  Archive
+                </button>
+              </div>   
           </div>
 
           <h3 className="task-item-title">
@@ -151,7 +191,7 @@ const TaskItem = ({ task }) => {
               event.stopPropagation();
 
               setShowDescription(
-                (previousState) => !previousState
+                (prevState) => !prevState
               );
             }}
           >
