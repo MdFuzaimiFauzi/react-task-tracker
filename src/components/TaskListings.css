@@ -1,5 +1,5 @@
 .task-listings {
-  background-color: #eff6ff;
+  background-color: #0F172A;
   padding: 15px 15px;
 }
 
@@ -13,17 +13,23 @@
   margin-top: 0;
   margin-bottom: 1.5rem;
 
-  color: #6366f1;
+  color: #F8FAFC;
   font-size: 1.875rem;
   line-height: 2.25rem;
   font-weight: 700;
   text-align: center;
 }
 
-.task-listings-grid {
+/* .task-listings-grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
   gap: 1.5rem;
+} */
+
+.task-listings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
 }
 
 .task-listings-state {

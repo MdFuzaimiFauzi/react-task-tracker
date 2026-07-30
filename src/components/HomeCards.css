@@ -1,5 +1,6 @@
 .home-cards-section {
     padding: 16px 0;
+    background-color: #111827;
 }
 
 .home-cards-container {
@@ -22,24 +23,24 @@
 }
 
 .developer-card {
-    background-color: #f3f4f6;
+    background-color: #334155;
 }
 
 .designer-card {
-    background-color: #3B6E82;
+    background-color: #334155;
 }
 
 .home-card-title {
     margin: 0;
     font-size: 24px;
     font-weight: 700;
-    color: #111827;
+    color: #ffffff;
 }
 
 .home-card-description {
     margin-top: 8px;
     font-size: 16px;
-    color: #111827;
+    color: #e7e7e7;
 }
 
 .home-card-button {
@@ -58,7 +59,7 @@
 }
 
 .developer-button {
-    background-color: #000000;
+    background-color: #94A3B8;
 }
 
 .developer-button:hover {
@@ -66,7 +67,7 @@
 }
 
 .employer-button {
-    background-color: #6366f1;
+    background-color: #94A3B8;
 }
 
 .employer-button:hover {
