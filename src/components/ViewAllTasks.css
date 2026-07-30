@@ -11,7 +11,7 @@
     display: inline-block;
     padding: 10px 10px;
     border-radius: 10px;
-    background-color: #6366f1;
+    background-color: #235BD6;
     color: white;
     font-size: 16px;
     font-weight: 300;
@@ -23,7 +23,7 @@
 }
 
 .view-all-tasks-button:hover{
-    background-color: #3033C9;
+    background-color: #1E4AAB;
 }
 
 .view-all-tasks-button:focus-visible {

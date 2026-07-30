@@ -13,7 +13,7 @@ const TaskListings = ({ isHome = false }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       const apiUrl = isHome
-        ? '/api/tasks?_page=1&_per_page=3'
+        ? '/api/tasks?_page=1&_per_page=4'
         : '/api/tasks';
 
       try {
