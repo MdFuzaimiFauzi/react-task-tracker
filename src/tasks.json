@@ -1,14 +1,76 @@
 {
   "tasks": [
     {
-      "title": "test task",
-      "description": "test",
-      "category": "Personal",
+      "title": "Create a reusable Modal component",
+      "description": "Build one modal component that can be reused for delete confirmation or task details.",
+      "category": "Development",
       "priority": "Medium",
       "status": "Pending",
-      "dueDate": "2026-06-06",
-      "createdAt": "2026-07-27",
-      "id": "vPnie3E-xNo"
+      "dueDate": "2026-08-30",
+      "id": "iGXEoNrehug"
+    },
+    {
+      "title": "Add task filtering with useState",
+      "description": "Let uses filter task by status: All, Pending, In Progress, Completed",
+      "category": "Development",
+      "priority": "High",
+      "status": "Pending",
+      "dueDate": "2026-08-30",
+      "id": "rGfYc2OdPQ4"
+    },
+    {
+      "title": "Implement custom useTasks hook",
+      "description": "Move task fetching, loading and error logic into a reusable custom hook.",
+      "category": "Development",
+      "priority": "High",
+      "status": "Pending",
+      "dueDate": "2026-08-30",
+      "id": "W56j6hYXxFE"
+    },
+    {
+      "title": "Add an Error Bondary page",
+      "description": "Display a proper fallback UI when a component or route encounters an unexpected error",
+      "category": "Development",
+      "priority": "Medium",
+      "status": "Pending",
+      "dueDate": "2026-08-30",
+      "id": "6weEH8pAP0g"
+    },
+    {
+      "title": "Add a search bar for tasks",
+      "description": "Filter tasks by title or description as the user types",
+      "category": "Development",
+      "priority": "Medium",
+      "status": "Pending",
+      "dueDate": "2026-08-30",
+      "id": "yW1MjI89LEk"
+    },
+    {
+      "title": "Create a loading skeleton component",
+      "description": "Show a placeholder cards while tasks are being fetched from the API",
+      "category": "Development",
+      "priority": "Medium",
+      "status": "Pending",
+      "dueDate": "2026-08-30",
+      "id": "4-COOmEJf9U"
+    },
+    {
+      "title": "Add task sorting options",
+      "description": "Allow users to sort by due date, priority, newest or oldest",
+      "category": "Development",
+      "priority": "Medium",
+      "status": "Pending",
+      "dueDate": "2026-08-30",
+      "id": "kx7CnuamqPk"
+    },
+    {
+      "title": "Save theme preferences with localStorage",
+      "description": "Add light and dark mode, then memories the selected theme after refresh",
+      "category": "Development",
+      "priority": "High",
+      "status": "Not Started Yet",
+      "dueDate": "2026-08-16",
+      "id": "ubclce4z5Js"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

@@ -218,7 +218,7 @@ const TaskItem = ({ task }) => {
 
         <div className="task-item-footer">
           <span className="task-item-created-date">
-            Created: {formatDueDate(task.createdAt)}
+            Created: {task.createdAt}
           </span>
         </div>
       </div>

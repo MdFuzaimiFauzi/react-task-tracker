@@ -7,7 +7,7 @@ const Hero = ({
 }) => {
   return (
     <>
-        <section className="hero">
+        {/* <section className="hero">
             <div
                 className="hero-container"
             >
@@ -21,7 +21,7 @@ const Hero = ({
                 </p>
                 </div>
             </div>
-        </section>
+        </section> */}
     </>
   )
 }

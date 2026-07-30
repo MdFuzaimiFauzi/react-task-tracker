@@ -89,11 +89,11 @@ px-3 py-2            → padding: 8px 12px
 }
 
 .navbar-link:hover {
-    background-color: #111827;
+    background-color: #1E4AAB;
 }
 
 .navbar-link-active {
-    background-color: black;
+    background-color: #235BD6;
 }
 
 /* Smaller Screen Size */
