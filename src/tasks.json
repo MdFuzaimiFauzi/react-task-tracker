@@ -23,7 +23,7 @@
       "description": "Move task fetching, loading and error logic into a reusable custom hook.",
       "category": "Development",
       "priority": "High",
-      "status": "Pending",
+      "status": "Completed",
       "dueDate": "2026-08-30",
       "id": "W56j6hYXxFE"
     },
@@ -68,7 +68,7 @@
       "description": "Add light and dark mode, then memories the selected theme after refresh",
       "category": "Development",
       "priority": "High",
-      "status": "Not Started Yet",
+      "status": "Pending",
       "dueDate": "2026-08-16",
       "id": "ubclce4z5Js"
     }

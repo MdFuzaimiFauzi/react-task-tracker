@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 import {
   FaCalendarAlt,
   FaCheckCircle,
   FaClock,
   FaExclamationCircle,
   FaTag,
+  FaRegCheckSquare,
 } from 'react-icons/fa';
 
 import './TaskItem.css';
@@ -38,7 +40,7 @@ const TaskItem = ({ task }) => {
   const getStatusIcon = () => {
     switch (task.status) {
       case 'Completed':
-        return <FaCheckCircle />;
+        return <FaRegCheckSquare />;
 
       case 'In Progress':
         return <FaClock />;
@@ -46,7 +48,40 @@ const TaskItem = ({ task }) => {
       default:
         return <FaExclamationCircle />;
     }
-  };
+  }
+
+  // const uncheckEvent = async (taskId) => {
+  //   event.stopPropagation();
+  //   try{
+  //     const response = await fetch(`/api/tasks/$taskId}`, {
+  //       )
+  //   }
+  //   }
+
+  const uncheckEvent = async (taskId) => {
+    event.stopPropagation();
+
+    try{
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: `PATCH`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: 'Pending',
+        }),
+      });
+
+      if (!response.ok)
+        throw new Error ('Failed to undo task update');
+              
+    setCurrentStat('Pending')
+    toast.success('Task returned as pending');
+    }
+    catch (error){
+      console.error('Failed to mark test as pending: ',error);
+    }
+  }
 
   const formatDueDate = (dueDate) => {
     if (!dueDate) {
@@ -86,9 +121,11 @@ const TaskItem = ({ task }) => {
       }
 
       setCurrentStat('Completed')
+      toast.success('Task marked as completed')
 
     } catch (error) {
-      console.error('Error updating task: ',error);
+      console.error('Error updating task: ', error);
+      toast.Error('Task progress cannot be updated')
     }
   };
 
@@ -141,29 +178,46 @@ const TaskItem = ({ task }) => {
       <div className="task-item-content">
         <div className="task-item-header">
           <div className="task-item-badges">
-            <span
-              className={`task-priority task-priority-${priorityClass}`}
-            >
+            <span className={`task-priority task-priority-${priorityClass}`}>
               {task.priority}
             </span>
 
-            <span
-              className={`task-status task-status-${currentStat.toLowerCase()}`}>
-              {getStatusIcon(currentStat)}
-              {currentStat}
-            </span>
+           {currentStat === 'Completed' ? (
+              <button
+                type="button"
+                className="task-status task-status-completed task-status-button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  uncheckEvent(task.id);
+                }}
+                title="Undo 'Completed'"
+              >
+                {getStatusIcon(currentStat)}
+                {currentStat}
+                </button>
+            ) : (
+              <span className={`task-status task-status-${currentStat
+                .toLowerCase()
+                .replaceAll(' ','-')}`}
+              >
+                {getStatusIcon(currentStat)}
+                {currentStat}
+              </span>
+
+            )}
+            <div/>
             
             <div className="task-item-actions">
               {currentStat !== 'Completed' && (
-                <button type="button" className="check-button" 
-                        onClick={(event) => {event.stopPropagation();
-                          checkEvent(task.id)
-                        }}
-                >
-                  ✓
-                </button>
+                <FaRegCheckSquare 
+                className="check-button" 
+                onClick={(event) => {event.stopPropagation();
+                checkEvent(task.id);
 
-              )}
+              }}
+              title = "Click to mark as 'Completed'"
+              />
+            )}
             
                 <button type="button" className="archive-button"
                         onClick={(event) => {event.stopPropagation();
@@ -218,7 +272,9 @@ const TaskItem = ({ task }) => {
 
         <div className="task-item-footer">
           <span className="task-item-created-date">
-            Created: {task.createdAt}
+            Created: {task.createdAt
+                  ? formatDueDate(task.createdAt)
+                  : 'Unknown'}
           </span>
         </div>
       </div>

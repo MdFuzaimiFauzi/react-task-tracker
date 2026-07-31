@@ -186,10 +186,9 @@
 }
 
 .check-button {
-  border-radius: 100%;
-  width: 30px;
-  height: 30px;
-
+  width: 25px;
+  height: 25px;
+  color: rgb(206, 206, 206);
 }
 
 .task-item-button:hover {
