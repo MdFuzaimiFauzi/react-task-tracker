@@ -15,13 +15,15 @@ const MainLayout = () => {
       </main>
 
       <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
+        position="bottom-right"
+        autoClose={2500}
+        hideProgressBar={true}
+        newestOnTop={true}
+        theme="dark"
         closeOnClick
         pauseOnHover
         draggable
+        
       />
     </>
   );
