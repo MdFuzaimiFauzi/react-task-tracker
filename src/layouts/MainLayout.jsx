@@ -18,12 +18,12 @@ const MainLayout = () => {
         position="bottom-right"
         autoClose={2500}
         hideProgressBar={true}
-        newestOnTop={true}
+        newestOnTop={false}
         theme="dark"
         closeOnClick
         pauseOnHover
         draggable
-        
+
       />
     </>
   );

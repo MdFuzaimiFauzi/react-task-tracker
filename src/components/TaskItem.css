@@ -90,10 +90,10 @@
 }
 
 .task-item-title {
-  margin-bottom: 0;
+  margin: 20px 0 5px;
   color: #F8FAFC;
   font-size: 1.25rem;
-  line-height: 1.75rem;
+  line-height: 1.35;
   font-weight: 700;
 }
 

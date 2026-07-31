@@ -37,8 +37,8 @@ const TaskItem = ({ task }) => {
     ?.toLowerCase()
     .replaceAll(' ', '-');
 
-  const getStatusIcon = () => {
-    switch (task.status) {
+  const getStatusIcon = ( status ) => {
+    switch ( status ) {
       case 'Completed':
         return <FaRegCheckSquare />;
 
@@ -49,14 +49,6 @@ const TaskItem = ({ task }) => {
         return <FaExclamationCircle />;
     }
   }
-
-  // const uncheckEvent = async (taskId) => {
-  //   event.stopPropagation();
-  //   try{
-  //     const response = await fetch(`/api/tasks/$taskId}`, {
-  //       )
-  //   }
-  //   }
 
   const uncheckEvent = async (taskId) => {
     event.stopPropagation();
@@ -98,7 +90,6 @@ const TaskItem = ({ task }) => {
   };
 
   const checkEvent = async (taskId) => {
-    console.log('TASK completed: ',task.id)
 
     const checkedEvent = {
       ...task,
@@ -130,7 +121,6 @@ const TaskItem = ({ task }) => {
   };
 
   const archiveEvent = async (taskId) => {
-    console.log('TASK archived: ',task.id)
 
     const archivedTask = {
       ...task,
