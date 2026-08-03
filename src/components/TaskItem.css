@@ -16,8 +16,9 @@
 }
 
 .task-item:hover {
-  cursor:pointer;
-  background-color: #4B648A;
+  background-color: #223047;
+  border-color: #4a5d78;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
 }
 
 .task-item-content {
