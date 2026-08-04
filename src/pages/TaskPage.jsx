@@ -21,13 +21,11 @@ const TaskPage = ({ deleteTask }) => {
   const task = useLoaderData();
   const navigate = useNavigate();
 
-  const formatDate = (dateValue) => {
-    if (!dateValue) {
-      return 'No date provided';
+  const formatDate = (value) => {
+    if (!value) {
+      return 'Unknown';
     }
-
-    const date = new Date(`${dateValue}T00:00:00`);
-
+    const date = new Date(value);
     return date.toLocaleDateString('en-MY', {
       day: 'numeric',
       month: 'long',
@@ -145,7 +143,7 @@ const TaskPage = ({ deleteTask }) => {
                     </span>
 
                     <p className="task-information-value">
-                      {formatDate(task.dueDate)}
+                      {formatDate(task.due_date)}
                     </p>
                   </div>
                 </div>
@@ -159,7 +157,7 @@ const TaskPage = ({ deleteTask }) => {
                     </span>
 
                     <p className="task-information-value">
-                      {formatDate(task.createdAt)}
+                      {formatDate(task.created_at)}
                     </p>
                   </div>
                 </div>

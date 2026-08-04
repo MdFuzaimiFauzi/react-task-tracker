@@ -32,7 +32,7 @@ const TaskForm = ({
     setCategory(loadedTask.category ?? 'Development');
     setPriority(loadedTask.priority ?? 'Medium');
     setStatus(loadedTask.status ?? 'Not Started Yet');
-    setDueDate(loadedTask.dueDate ?? '');
+    setDueDate(loadedTask.due_date ? loadedTask.due_date.slice(0,10) : '');
   }, [isEditMode, loadedTask]);
 
   const submitForm = async (event) => {
@@ -44,7 +44,7 @@ const TaskForm = ({
       category,
       priority,
       status,
-      dueDate,
+      due_date: dueDate,
     };
 
 

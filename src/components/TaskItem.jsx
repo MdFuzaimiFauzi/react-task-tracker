@@ -75,16 +75,14 @@ const TaskItem = ({ task }) => {
     }
   }
 
-  const formatDueDate = (dueDate) => {
-    if (!dueDate) {
-      return 'No due date';
+  const formatDate = (value) => {
+    if (!value) {
+      return 'Unknown';
     }
-
-    const date = new Date(`${dueDate}T00:00:00`);
-
+    const date = new Date(value);
     return date.toLocaleDateString('en-MY', {
       day: 'numeric',
-      month: 'short',
+      month: 'long',
       year: 'numeric',
     });
   };
@@ -253,7 +251,7 @@ const TaskItem = ({ task }) => {
             <FaCalendarAlt />
 
             <span>
-              Due: {formatDueDate(task.dueDate)}
+              Due: {task.due_date ? formatDate(task.due_date) : 'No due date'}
             </span>
           </div>
         </div>
@@ -262,9 +260,7 @@ const TaskItem = ({ task }) => {
 
         <div className="task-item-footer">
           <span className="task-item-created-date">
-            Created: {task.createdAt
-                  ? formatDueDate(task.createdAt)
-                  : 'Unknown'}
+            Created: {formatDate(task.created_at)}
           </span>
         </div>
       </div>

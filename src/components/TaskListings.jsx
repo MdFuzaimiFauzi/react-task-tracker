@@ -12,45 +12,25 @@ const TaskListings = ({ isHome = false }) => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const apiUrl = isHome
-        ? '/api/tasks?_page=1&_per_page=4'
-        : '/api/tasks';
-
       try {
         setLoading(true);
         setError('');
 
+        const apiUrl = 'api/tasks';
         const response = await fetch(apiUrl);
 
         if (!response.ok) {
           throw new Error(`Failed to fetch tasks: ${response.status}`);
         }
 
-        const result = await response.json();
+        const data = await response.json();
 
-        /*
-          JSON Server pagination may return:
+        const showTasks = isHome?
+        data.slice(0, 4) : data;
 
-          {
-            first: 1,
-            prev: null,
-            next: 2,
-            last: 2,
-            pages: 2,
-            items: 5,
-            data: [...]
-          }
-
-          A normal request returns an array directly.
-        */
-        const taskData = Array.isArray(result)
-          ? result
-          : result.data ?? [];
-
-        setTasks(taskData);
+        setTasks(showTasks);
       } catch (error) {
-        console.error('Error fetching tasks:', error);
-        setError('Unable to load tasks. Please try again.');
+        setError('Failed to fetch tasks');
       } finally {
         setLoading(false);
       }
@@ -58,7 +38,7 @@ const TaskListings = ({ isHome = false }) => {
 
     fetchTasks();
   }, [isHome]);
-
+ 
   return (
     <section className="task-listings">
       <div className="task-listings-container">
