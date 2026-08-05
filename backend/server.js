@@ -3,6 +3,13 @@ import cors from 'cors';
 import { connectSqlServer, sqlPool } from './sqlserver.js';
 import pool from './database.js';
 
+import 'dotenv/config';
+import oracledb from 'oracledb';
+import oracleConfig from './oracle.js';
+import { getOracleTasks } from './oracleserver.js';
+
+oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
+
 const app = express();
 const port = process.env.PORT || 8000;
 
@@ -10,8 +17,34 @@ const port = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
+//oracle test connection
+const testOracleConnection = async () => {
+    let connection;
+
+
+    try {
+        connection = await oracledb.getConnection(oracleConfig);
+
+        const result = await connection.execute(
+            'SELECT * FROM tasks'
+        );
+
+        console.log('Oracle connection successful:', result.rows);
+
+    }   catch (error) {
+        console.error('Oracle connection failed:', error);
+
+    }   finally {
+        if (connection) {
+            await connection.close();
+        }
+    }
+};
+
 //Connect SQL Server
 connectSqlServer();
+
+testOracleConnection();
 
 //postgreSQL API fetching
 app.get('/api/tasks', async (req,res) => {
@@ -218,6 +251,22 @@ app.get('/api/sqlserver/tasks', async (req, res) => {
             message: 'Failed to retrieve tasks',
         });
         
+    }
+});
+
+
+//oracle API fetching
+app.get('/api/oracle/tasks', async (req, res) => {
+    try {
+        const tasks =await getOracleTasks();
+
+        res.json(tasks);
+    } catch (error) {
+        console.error('Failed to retrieve Oracle tasks:', error);
+
+        res.status(500).json({
+            message: 'Failed to retrieve Oracle tasks',
+        });
     }
 });
 
