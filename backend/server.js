@@ -1,14 +1,19 @@
 import express from 'express';
 import cors from 'cors';
-
+import { connectSqlServer, sqlPool } from './sqlserver.js';
 import pool from './database.js';
 
 const app = express();
 const port = process.env.PORT || 8000;
 
+//middleware
 app.use(cors());
 app.use(express.json());
 
+//Connect SQL Server
+connectSqlServer();
+
+//postgreSQL API fetching
 app.get('/api/tasks', async (req,res) => {
     try {
         const result = await pool.query (
@@ -50,7 +55,6 @@ app.get('/api/tasks/:id', async (req, res) => {
     }
 });
 
-
 app.delete('/api/tasks/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -75,7 +79,6 @@ app.delete('/api/tasks/:id', async (req, res) => {
         });
     }
 });
-
 
 app.post('/api/tasks', async (req, res) => {
     try {
@@ -185,8 +188,7 @@ app.patch(`/api/tasks/:id`, async (req, res) => {
   });
 }
 
-res.json(result.rows[0]);
-        res.json(result.rows[0]);
+    res.json(result.rows[0]);
     } catch (error) {
         console.error('Failed to update task: ', error);
 
@@ -195,7 +197,29 @@ res.json(result.rows[0]);
         });
     }
 })
-    
+
+//sql-server API fetching
+app.get('/api/sqlserver/tasks', async (req, res) => {
+    try {
+        const result = await sqlPool
+        .request()
+        .query(`
+            SELECT *
+            FROM tasks
+            WHERE archived = 0
+            ORDER BY id DESC
+        `);
+
+        res.json(result.recordset);
+        } catch (error) {
+            console.error('Failed to retrieve tasks: ', error);
+        
+        res.status(500).json({
+            message: 'Failed to retrieve tasks',
+        });
+        
+    }
+});
 
 app.listen(port, () => {
   console.log(`Backend running on port ${port}`);
