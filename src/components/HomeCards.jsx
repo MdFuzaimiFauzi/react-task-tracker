@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import Card from './Card.jsx'
 import '../components/HomeCards.css'
+import TaskPriorityChart from "./TaskPriorityChart.jsx";
 
 const HomeCards = () => {
   return (
@@ -44,20 +45,22 @@ const HomeCards = () => {
 
             </div>
 
-            {/* UI/UX Card */}
-            <div className="home-card ui-card">
-              <h2 className="home-card-title">UI/UX Development</h2>
+            {/* Graph Card */}
+            <div className="home-card priority-overview-card">
+              <h2 className="home-card-title">Task Priority Overview</h2>
               
               <p className="home-card-description">
-                Layouts, CSS styling and responsive design tasks
+                Current task distribution by priority
               </p>
 
-              <Link
+              <TaskPriorityChart/>
+
+              {/* <Link
                 to="/add-task"
                 className="home-card-button all-button"
               >
-                  Add Task
-              </Link>
+                  See Detail
+              </Link> */}
             </div>
 
              {/* Weekly Progress Card */}

@@ -1,0 +1,22 @@
+.priority-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    /* margin: 40px auto; */
+}
+
+.chart-tooltip {
+    position: absolute;
+    display: none;
+
+    padding: 8px 12px;
+    border-radius: 6px;
+
+    background: #1e293b;
+    color: white;
+
+    font-size: 14px;
+
+    pointer-events: none;
+}

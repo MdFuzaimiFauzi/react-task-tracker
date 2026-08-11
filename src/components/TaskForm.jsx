@@ -18,7 +18,7 @@ const TaskForm = ({
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Development');
   const [priority, setPriority] = useState('Medium');
-  const [status, setStatus] = useState('Not Started Yet');
+  const [status, setStatus] = useState('Not Start Yet');
   const [dueDate, setDueDate] = useState('');
   
 
@@ -31,7 +31,7 @@ const TaskForm = ({
     setDescription(loadedTask.description ?? '');
     setCategory(loadedTask.category ?? 'Development');
     setPriority(loadedTask.priority ?? 'Medium');
-    setStatus(loadedTask.status ?? 'Not Started Yet');
+    setStatus(loadedTask.status ?? 'Not Start Yet');
     setDueDate(loadedTask.due_date ? loadedTask.due_date.slice(0,10) : '');
   }, [isEditMode, loadedTask]);
 
@@ -190,8 +190,8 @@ const TaskForm = ({
                   setStatus(event.target.value);
                 }}
               >
-                <option value="Not Started Yet">
-                  Not Started Yet
+                <option value="Not Start Yet">
+                  Not Start Yet
                 </option>
 
                 <option value="Pending">

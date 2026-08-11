@@ -11,6 +11,7 @@ import TasksPage from './pages/TasksPage.jsx';
 import TaskPage, { taskLoader } from './pages/TaskPage.jsx';
 import TaskForm from './components/TaskForm.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import D3Example from './components/D3Example.jsx';
 
 // Add a new task
 const addTask = async (newTask) => {
@@ -76,6 +77,11 @@ const router = createBrowserRouter(
       <Route
         path="/add-task"
         element={<TaskForm onSubmit={addTask} mode="add" />}
+      />
+
+      <Route
+      path="/d3"
+      element={<D3Example />}
       />
 
       <Route

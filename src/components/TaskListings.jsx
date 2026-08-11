@@ -16,9 +16,9 @@ const TaskListings = ({ isHome = false }) => {
         setLoading(true);
         setError('');
 
-        //const apiUrl = 'api/tasks';
+        const apiUrl = 'api/tasks';
         //const apiUrl = '/api/oracle/tasks';
-        const apiUrl = '/api/sqlserver/tasks'
+        //const apiUrl = '/api/sqlserver/tasks'
         const response = await fetch(apiUrl);
 
         if (!response.ok) {
