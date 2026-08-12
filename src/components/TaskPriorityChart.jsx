@@ -1,188 +1,207 @@
 import * as d3 from "d3";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./TaskPriorityChart.css";
 
-
 const TaskPriorityChart = () => {
-    const [tasks, setTasks] = useState([]);
-    const svgRef = useRef(null);
+  const [tasks, setTasks] = useState([]);
+  const svgRef = useRef(null);
 
-    useEffect(() => {
-        const fetchTasks = async () => {
-            const response = await fetch("/api/tasks");
-            const data = await response.json();
+  // Fetch tasks + refresh every 3 seconds
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const response = await fetch("/api/tasks");
+      const data = await response.json();
 
-            setTasks(data);
-        };
+      setTasks(data);
+    };
 
-        fetchTasks();
+    fetchTasks();
 
-        //Fetch again every 3 seconds
-        const interval = setInterval(() => {
-            fetchTasks();
-        }, 3000);
+    const interval = setInterval(fetchTasks, 3000);
 
-        //clean up when component disappears
-        return () => {
-            clearInterval(interval);
-        };
-    }, []);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
-    const priorityData = [
-        {
-            priority: "Urgent",
-            count: tasks.filter((task) => task.priority === "Urgent").length,
-        },
-        {
-            priority: "High",
-            count: tasks.filter((task) => task.priority === "High").length,
-        },
-        {
-            priority: "Medium",
-            count: tasks.filter((task) => task.priority === "Medium").length,
-        },
-        {
-            priority: "Low",
-            count: tasks.filter((task) => task.priority === "Low").length,
-        }
-    ];
+  const priorityData = [
+    {
+      priority: "Urgent",
+      count: tasks.filter((task) => task.priority === "Urgent").length,
+    },
+    {
+      priority: "High",
+      count: tasks.filter((task) => task.priority === "High").length,
+    },
+    {
+      priority: "Medium",
+      count: tasks.filter((task) => task.priority === "Medium").length,
+    },
+    {
+      priority: "Low",
+      count: tasks.filter((task) => task.priority === "Low").length,
+    },
+  ];
 
-    useEffect(() => {
-        if (tasks.length === 0) return;
+  useEffect(() => {
+    if (tasks.length === 0) return;
 
-        const width = 370; //total width
-        const height = 150; //total height
+    const width = 400;
+    const height = 160;
 
-        const marginTop = 30;
-        const marginBottom = 30;
-        const marginLeft = 30;
-        const marginRight = 30;
+    const marginTop = 5;
+    const marginBottom = 30;
+    const marginLeft = 30;
+    const marginRight = 30;
 
-        const svg = d3.select(svgRef.current);
+    const svg = d3.select(svgRef.current);
 
-        const maxCount = d3.max(priorityData, (d) => d.count);
+    const maxCount = d3.max(priorityData, (d) => d.count) || 1;
 
-        svg.selectAll("*").remove();
+    // X scale
+    const xScale = d3
+      .scaleBand()
+      .domain(priorityData.map((d) => d.priority))
+      .range([marginLeft, width - marginRight])
+      .padding(0.3);
 
-        const xScale = d3
-            .scaleBand()
-            .domain(priorityData.map((d) => d.priority))
-            .range([marginLeft, width - marginRight])
-            .padding(0.3);
+    // Y scale
+    const yScale = d3
+      .scaleLinear()
+      .domain([0, maxCount])
+      .range([height - marginBottom, marginTop]);
 
-        const yScale = d3
-            .scaleLinear()
-            .domain([0, maxCount])
-            .range([height - marginBottom, marginTop]);
+    // Remove previous tooltip before creating a new one
+    d3.select(".priority-chart")
+      .selectAll(".chart-tooltip")
+      .remove();
 
-        const tooltip = d3
-            .select(".priority-chart")
-            .append("div")
-            .attr("class", "chart-tooltip");
+    const tooltip = d3
+      .select(".priority-chart")
+      .append("div")
+      .attr("class", "chart-tooltip");
+
+    // -------------------------
+    // Bars
+    // -------------------------
+
+    const bars = svg
+      .selectAll(".priority-bar")
+      .data(priorityData, (d) => d.priority);
+
+    bars
+      .join(
+        (enter) =>
+            enter
+            .append("rect")
+        .attr("class", "priority-bar")
+        .attr("x", (d) => xScale(d.priority))
+        .attr("width", xScale.bandwidth())
+        .attr("y", height - marginBottom)
+        .attr("height", 0),
+
+        (update) => update)
+        
+      .attr("class", "priority-bar")
+      .attr("x", (d) => xScale(d.priority))
+      .attr("width", xScale.bandwidth())
+      .attr("fill", (d) => {
+        if (d.priority === "Urgent") return "cyan";
+        if (d.priority === "High") return "red";
+        if (d.priority === "Medium") return "orange";
+        if (d.priority === "Low") return "green";
+
+        return "steelblue";
+      })
+      .on("mouseover", function (event, d) {
+        d3.select(this).attr("opacity", 0.7);
+
+        tooltip
+          .style("display", "block")
+          .html(`
+            <strong>${d.priority}</strong><br/>
+            ${d.count} task${d.count !== 1 ? "s" : ""}
+          `);
+      })
+      .on("mousemove", function (event) {
+        tooltip
+          .style("left", `${event.pageX + 20}px`)
+          .style("top", `${event.pageY + 20}px`);
+      })
+      .on("mouseout", function () {
+        d3.select(this).attr("opacity", 1);
+
+        tooltip.style("display", "none");
+      })
+      .transition()
+      .duration(700)
+      .attr("y", (d) => yScale(d.count))
+      .attr(
+        "height",
+        (d) => height - marginBottom - yScale(d.count)
+      );
+
+    // -------------------------
+    // Count labels
+    // -------------------------
+
+    const labels = svg
+      .selectAll(".count-label")
+      .data(priorityData, (d) => d.priority);
+
+    // labels
+    //   .join("text")
+    //   .attr("class", "count-label")
+    //   .attr(
+    //     "x",
+    //     (d) => xScale(d.priority) + xScale.bandwidth() / 2
+    //   )
+    //   .attr("text-anchor", "middle")
+    //   .attr("fill", "white")
+    //   .attr("font-size", "14px")
+    //   .attr("y", (d) => yScale(d.count) - 10)
+    //   .text((d) => d.count);
 
 
-        // Draw bars
-        svg
-            .selectAll("rect")
-            .data(priorityData)
-            .join("rect")
-            .attr("x", (d) => xScale(d.priority))
-            .attr("y", (d) => yScale(d.count))
-            .attr("width", xScale.bandwidth())
-            .attr(
-                "height",
-                (d) => height - marginBottom - yScale(d.count)
-            )
-            .attr("fill", (d) => {
-                if (d.priority === "Urgent") return "purple";
-                if (d.priority === "High") return "red";
-                if (d.priority === "Medium") return "orange";
-                if (d.priority === "Low") return "green";
+    const yAxis = d3
+  .axisLeft(yScale)
+  .ticks(maxCount)
+  .tickFormat(d3.format("d"));
 
-                return "steelblue";
-            })
-
-            //add hover interaction
-            .on("mouseover", function (event, d) {
-                d3.select(this)
-                    .attr("opacity", 0.7);
-
-                tooltip
-                    .style("display", "block")
-                    .html(`
-                <strong>${d.priority}</strong><br/>
-                ${d.count} task${d.count !== 1 ? "s" : ""}
-                `);
-
-            })
-
-            .on("mousemove", function (event) {
-                tooltip
-                    .style("left", `${event.pageX + 20}px`)
-                    .style("top", `${event.pageY + 20}px`);
-
-            })
-
-            .on("mouseout", function () {
-                d3.select(this)
-                    .attr("opacity", 1);
-
-                tooltip
-                    .style("display", "none");
-            });
-
-    // Draw count labels
     svg
-        .selectAll(".count-label")
-        .data(priorityData)
-        .join("text")
-        .attr("class", "count-label")
-        .attr("x", (d) => xScale(d.priority) + xScale.bandwidth() / 2)
-        .attr("y", (d) => yScale(d.count) - 10)
-        .attr("text-anchor", "middle")
-        .attr("fill", "white")
-        .attr("font-size", "14px")
-        .text((d) => d.count);
+    .selectAll(".y-axis")
+    .data([null])
+    .join("g")
+    .attr("class", "y-axis")
+    .attr("transform", `translate(${marginLeft}, 0)`)
+    .attr("color", "white")
+    .call(yAxis);
 
-    //Draw X-axis
     const xAxis = d3.axisBottom(xScale);
 
     svg
-        .append("g")
-        .attr(
-            "transform",
-            `translate(0, ${height - marginBottom})`
-        )
-        .call(xAxis)
-        .attr("color", "white");
+      .selectAll(".x-axis")
+      .data([null])
+      .join("g")
+      .attr("class", "x-axis")
+      .attr(
+        "transform",
+        `translate(0, ${height - marginBottom})`
+      )
+      .attr("color", "white")
+      .call(xAxis);
 
-    //Draw y-axis   
-    // const yAxis = d3
-    //     .axisLeft(yScale)
-    //     .tickValues(d3.range(0, maxCount + 1))
-    //     .tickFormat(d3.format("d"));
-    // d=means display integer
+  }, [tasks]);
 
-    // svg
-    //     .append("g")
-    //     .attr("transform", `translate(${marginLeft}, 0)`)
-    //     .call(yAxis)
-    //     .attr("color", "white");
-
-
-
-}, [tasks]);
-
-return (
+  return (
     <div className="priority-chart">
-        <svg
-            ref={svgRef}
-            width="370"
-            height="150"
-            style={{ border: "1px solid white" }}
-        />
+      <svg
+        ref={svgRef}
+        width="370"
+        height="150"
+      />
     </div>
-);
+  );
 };
 
 export default TaskPriorityChart;

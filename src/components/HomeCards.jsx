@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Card from './Card.jsx'
 import '../components/HomeCards.css'
 import TaskPriorityChart from "./TaskPriorityChart.jsx";
+import TaskStatusChart from "./TaskStatusChart.jsx";
 
 const HomeCards = () => {
   return (
@@ -28,20 +29,22 @@ const HomeCards = () => {
 
             </div>
 
-           {/* Developer Card */}
+           {/* Task Status Chart */}
             <div className="home-card all-card">
-              <h2 className="home-card-title">Frontend Development</h2>
+              <h2 className="home-card-title">Task Status Overview</h2>
 
               <p className="home-card-description">
-                State management, API and component logic tasks
+                {/* State management, API and component logic tasks */}
               </p>
+
+              <TaskStatusChart/>
               
-              <Link
+              {/* <Link
                 to="/jobs"
                 className="home-card-button all-button"
                 >
                   Browse Task
-              </Link>
+              </Link> */}
 
             </div>
 
