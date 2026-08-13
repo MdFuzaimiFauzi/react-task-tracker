@@ -22,6 +22,23 @@ const MainLayout = () => {
     fetchTasks();
   }, []);
 
+  useEffect(() => {
+    const eventSource = new EventSource('/api/events');
+
+    eventSource.addEventListener('tasks-changed', () => {
+      console.log('SSE: tasks changed');
+      fetchTasks();
+    });
+
+    eventSource.onerror = (error) => {
+      console.error('SSE connection error:', error);
+    };
+  
+    return () => {
+      eventSource.close();
+    };
+  })
+
   return (
     <>
       <Navbar />

@@ -17,6 +17,31 @@ const port = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
+
+//SSE support
+let sseClients = [];
+
+const notifyTaskChangeEvent = () => {
+    sseClients.forEach((client) => {
+        client.write(`event: tasks-changed\n`);
+        client.write(`data: updated\n\n`);
+    });
+};
+
+app.get(`/api/events`, (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    res.flushHeaders();
+
+    sseClients.push(res);
+
+    req.on('close', () => {
+        sseClients = sseClients.filter((client) => client !== res);
+    });
+});
+
 //oracle test connection
 const testOracleConnection = async () => {
     let connection;
@@ -104,6 +129,7 @@ app.delete('/api/tasks/:id', async (req, res) => {
         }
 
         res.json(result.rows[0]);
+        notifyTaskChangeEvent();
     } catch (error) {
         console.error('Failed to delete task: ', error);
 
@@ -145,7 +171,7 @@ app.post('/api/tasks', async (req, res) => {
             ]
         );
        res.status(201).json(result.rows[0]);
-        
+        notifyTaskChangeEvent();
     }
     catch (error){
         console.error('Failed to create task: ', error);
@@ -186,6 +212,7 @@ app.put(`/api/tasks/:id`, async (req, res) => {
         }
 
         res.json(result.rows[0]);
+        notifyTaskChangeEvent();
     } catch (error) {
         console.error('Failed to update task: ', error);
 
@@ -221,7 +248,8 @@ app.patch(`/api/tasks/:id`, async (req, res) => {
   });
 }
 
-    res.json(result.rows[0]);
+    res.json(result.rows[0])
+    notifyTaskChangeEvent();
     } catch (error) {
         console.error('Failed to update task: ', error);
 
