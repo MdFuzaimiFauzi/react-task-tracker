@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../components/HomeCards.css";
 import TaskPriorityChart from "./TaskPriorityChart.jsx";
 import TaskStatusChart from "./TaskStatusChart.jsx";
+import TaskCompletionTrend from "./TaskCompletionTrend.jsx";
 
 const HomeCards = ({ tasks }) => {
 
@@ -57,28 +58,29 @@ const HomeCards = ({ tasks }) => {
               </h2>
 
               <p className="home-card-description">
-                Current task distribution by priority
+                {/* Current task distribution by priority */}
               </p>
 
               <TaskPriorityChart tasks={tasks} />
             </div>
 
-            {/* Weekly Progress Card */}
-            <div className="home-card weekly-card">
+            {/* Task Completion Trend Card */}
+            <div className="home-card completion-trend-card">
               <h2 className="home-card-title">
-                Weekly Progress
+                Task Completion Trend
               </h2>
 
               <p className="home-card-description">
-                Overview of weekly progress
               </p>
 
-              <Link
+              <TaskCompletionTrend tasks={tasks}/>
+
+              {/* <Link
                 to="/jobs"
                 className="home-card-button all-button"
               >
                 See More
-              </Link>
+              </Link> */}
             </div>
 
           </div>

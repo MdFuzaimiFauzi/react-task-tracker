@@ -13,12 +13,12 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
-    padding: 16px;
+    padding: 8px;
 }
 
 .home-card {
-    padding: 30px;
-    border-radius: 14px;
+    padding: 20px;
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
 }
 
@@ -64,6 +64,10 @@
     transition:
         background-color 0.2s ease,
         transform 0.2s ease;
+}
+
+.completion-trend-card {
+    background-color: #334155;
 }
 
 .home-card-button:hover {

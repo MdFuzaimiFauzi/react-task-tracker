@@ -180,6 +180,8 @@ app.post('/api/tasks', async (req, res) => {
 });            
 
 app.put(`/api/tasks/:id`, async (req, res) => {
+    console.log(">>> PUT ROUTE HIT <<<", req.params.id);
+
     try {
         const { id } = req.params;
 
@@ -190,20 +192,45 @@ app.put(`/api/tasks/:id`, async (req, res) => {
             priority,
             status,
             due_date,
+            archived
         } = req.body;
 
         const result = await pool.query(
-           `UPDATE tasks
-            SET title = $2,
-                description = $3,
-                category = $4,
-                priority = $5,
-                status = $6,
-                due_date = $7
-            WHERE id = $1
-            RETURNING *`,
-            [id, title, description, category, priority, status, due_date]
+            `UPDATE tasks
+     SET title = COALESCE($2, title),
+         description = COALESCE($3, description),
+         category = COALESCE($4, category),
+         priority = COALESCE($5, priority),
+         status = COALESCE($6::varchar, status),
+         due_date = COALESCE($7, due_date),
+         archived = COALESCE($8, archived),
+
+         completed_at = CASE
+             WHEN $6::varchar = 'Completed' AND status <> 'Completed'
+                 THEN NOW()
+
+             WHEN $6::varchar IS NOT NULL
+                  AND $6::varchar <> 'Completed'
+                 THEN NULL
+
+             ELSE completed_at
+         END
+
+     WHERE id = $1
+     RETURNING *`,
+            [
+                id,
+                title ?? null,
+                description ?? null,
+                category ?? null,
+                priority ?? null,
+                status ?? null,
+                due_date ?? null,
+                archived ?? null
+            ]
         );
+
+        console.log("PUT BODY:", req.body);
 
         if (result.rows.length === 0) {
             return res.status(404).json({
@@ -213,11 +240,12 @@ app.put(`/api/tasks/:id`, async (req, res) => {
 
         res.json(result.rows[0]);
         notifyTaskChangeEvent();
-    } catch (error) {
-        console.error('Failed to update task: ', error);
+        } catch (error) {
+        console.error("PUT /api/tasks/:id ERROR:", error);
 
         res.status(500).json({
-            message: 'Failed to update task',
+            message: "Failed to update task",
+            error: error.message,
         });
     }
 });
@@ -232,15 +260,19 @@ app.patch(`/api/tasks/:id`, async (req, res) => {
 
         const result = await pool.query(
             `UPDATE tasks
-            SET status = COALESCE($2, status),
-                archived = COALESCE($3, archived)
+            SET 
+                    status = COALESCE($2, status),
+                    archived = COALESCE($3, archived),
+                    completed_at = CASE
+                        WHEN $2 = 'completed' THEN NOW()
+                        WHEN $2 IS NOT NULL AND $2 <> 'Completed' THEN NULL
+                    ELSE completed_at
+                END
             WHERE id = $1
             RETURNING *`,
-            [
-                id, 
-                status ?? null,
-                archived ?? null]
+            [id, status ?? null, archived ?? null]
         );
+        console.log("Updated Task: ", result.rows[0]);
 
        if (result.rows.length === 0) {
   return res.status(404).json({
@@ -250,6 +282,7 @@ app.patch(`/api/tasks/:id`, async (req, res) => {
 
     res.json(result.rows[0])
     notifyTaskChangeEvent();
+
     } catch (error) {
         console.error('Failed to update task: ', error);
 
