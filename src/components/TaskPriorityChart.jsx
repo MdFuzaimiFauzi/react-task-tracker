@@ -1,29 +1,10 @@
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "./TaskPriorityChart.css";
 
-const TaskPriorityChart = () => {
-  const [tasks, setTasks] = useState([]);
+const TaskPriorityChart = ({ tasks = [] }) => {
   const svgRef = useRef(null);
-
-  // Fetch tasks + refresh every 3 seconds
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const response = await fetch("/api/tasks");
-      const data = await response.json();
-
-      setTasks(data);
-    };
-
-    fetchTasks();
-
-    const interval = setInterval(fetchTasks, 3000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
+ 
   const priorityData = [
     {
       priority: "Urgent",
@@ -148,20 +129,6 @@ const TaskPriorityChart = () => {
     const labels = svg
       .selectAll(".count-label")
       .data(priorityData, (d) => d.priority);
-
-    // labels
-    //   .join("text")
-    //   .attr("class", "count-label")
-    //   .attr(
-    //     "x",
-    //     (d) => xScale(d.priority) + xScale.bandwidth() / 2
-    //   )
-    //   .attr("text-anchor", "middle")
-    //   .attr("fill", "white")
-    //   .attr("font-size", "14px")
-    //   .attr("y", (d) => yScale(d.count) - 10)
-    //   .text((d) => d.count);
-
 
     const yAxis = d3
   .axisLeft(yScale)

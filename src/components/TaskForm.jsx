@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import {
+  useLoaderData,
+  useNavigate,
+  useOutletContext,
+} from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import './TaskForm.css';
@@ -11,6 +15,8 @@ const TaskForm = ({
 }) => {
   const navigate = useNavigate();
   const loadedTask = useLoaderData();
+
+  const { fetchTasks } = useOutletContext();
 
   const isEditMode = mode == 'edit';
 
@@ -54,17 +60,18 @@ const TaskForm = ({
     try {
       await onSubmit(taskData);
 
+      await fetchTasks();
+
       if (isEditMode) {
         toast.success('Task updated successfully!');
       } else {
         toast.success('Task added successfully!');
       }
 
-      navigate('/tasks');
-      
+      navigate('/');
     }
-    catch (error) {
-      console.error('Failed to save task:', error);
+      catch (error) {
+        console.error('Failed to save task:', error);
     }
   };
 

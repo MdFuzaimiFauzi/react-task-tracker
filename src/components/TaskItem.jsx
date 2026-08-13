@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import {
   FaCalendarAlt,
-  FaCheckCircle,
   FaClock,
   FaExclamationCircle,
   FaTag,
@@ -13,11 +12,17 @@ import {
 import './TaskItem.css';
 import './Buttons.css';
 
-const TaskItem = ({ task }) => {
+const TaskItem = ({ task, onTaskUpdated }) => {
   const navigate = useNavigate();
+    console.log(
+    `TaskItem ${task.id}:`,
+    task.priority
+  );
+
   const [currentStat, setCurrentStat] = useState(task.status);
   const [showDescription, setShowDescription] = useState(false);
   const [isArchived, setIsArchived] = useState(task.archived ?? false);
+
   const openTask = () => {
     navigate(`/tasks/${task.id}`);
   };
@@ -33,12 +38,8 @@ const TaskItem = ({ task }) => {
     ?.toLowerCase()
     .replaceAll(' ', '-');
 
-  const statusClass = task.status
-    ?.toLowerCase()
-    .replaceAll(' ', '-');
-
-  const getStatusIcon = ( status ) => {
-    switch ( status ) {
+  const getStatusIcon = (status) => {
+    switch (status) {
       case 'Completed':
         return <FaRegCheckSquare />;
 
@@ -48,14 +49,12 @@ const TaskItem = ({ task }) => {
       default:
         return <FaExclamationCircle />;
     }
-  }
+  };
 
   const uncheckEvent = async (taskId) => {
-    event.stopPropagation();
-
-    try{
+    try {
       const response = await fetch(`/api/tasks/${taskId}`, {
-        method: `PATCH`,
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -64,39 +63,25 @@ const TaskItem = ({ task }) => {
         }),
       });
 
-      if (!response.ok)
-        throw new Error ('Failed to undo task update');
-              
-    setCurrentStat('Pending')
-    toast.success('Task returned as pending');
-    }
-    catch (error){
-      console.error('Failed to mark test as pending: ',error);
-    }
-  }
+      if (!response.ok) {
+        throw new Error('Failed to undo task update');
+      }
 
-  const formatDate = (value) => {
-    if (!value) {
-      return 'Unknown';
+      setCurrentStat('Pending');
+
+      onTaskUpdated?.();
+
+      toast.success('Task returned as pending');
+    } catch (error) {
+      console.error('Failed to mark task as pending:', error);
+      toast.error('Task status cannot be updated');
     }
-    const date = new Date(value);
-    return date.toLocaleDateString('en-MY', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
   };
 
   const checkEvent = async (taskId) => {
-
-    const checkedEvent = {
-      ...task,
-      status: 'Completed',
-    };
-
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
-        method : `PATCH`,
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -105,53 +90,67 @@ const TaskItem = ({ task }) => {
         }),
       });
 
-      if(!response.ok) {
-          throw new Error('Failed to update the task');
+      if (!response.ok) {
+        throw new Error('Failed to update the task');
       }
 
-      setCurrentStat('Completed')
-      toast.success('Task marked as completed')
+      setCurrentStat('Completed');
 
+      onTaskUpdated?.();
+
+      toast.success('Task marked as completed');
     } catch (error) {
-      console.error('Error updating task: ', error);
-      toast.Error('Task progress cannot be updated')
+      console.error('Error updating task:', error);
+      toast.error('Task progress cannot be updated');
     }
   };
 
   const archiveEvent = async (taskId) => {
-
-    const archivedTask = {
-      ...task,
-      archived: true,
-    }
-
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
-        method: `PATCH`,
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           archived: true,
         }),
-      })
+      });
 
-      if (!response.ok){
-        throw new Error('Failed to archive the task')
+      if (!response.ok) {
+        throw new Error('Failed to archive the task');
       }
-      setIsArchived(true)
+
+      setIsArchived(true);
+
+      onTaskUpdated?.();
+
+      toast.success('Task archived');
+    } catch (error) {
+      console.error('Error archiving task:', error);
+      toast.error('Task cannot be archived');
     }
-    catch (error) {
-      console.error('Error archiving task: ',error);
+  };
+
+  const formatDate = (value) => {
+    if (!value) {
+      return 'Unknown';
     }
+
+    const date = new Date(value);
+
+    return date.toLocaleDateString('en-MY', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+
+  if (isArchived) {
+    return null;
   }
 
-  if (isArchived)
-    return null;
-  
-
   return (
-    
     <article
       className="task-item"
       onClick={openTask}
@@ -170,7 +169,7 @@ const TaskItem = ({ task }) => {
               {task.priority}
             </span>
 
-           {currentStat === 'Completed' ? (
+            {currentStat === 'Completed' ? (
               <button
                 type="button"
                 className="task-status task-status-completed task-status-button"
@@ -182,38 +181,43 @@ const TaskItem = ({ task }) => {
               >
                 {getStatusIcon(currentStat)}
                 {currentStat}
-                </button>
+              </button>
             ) : (
-              <span className={`task-status task-status-${currentStat
-                .toLowerCase()
-                .replaceAll(' ','-')}`}
+              <span
+                className={`task-status task-status-${currentStat
+                  .toLowerCase()
+                  .replaceAll(' ', '-')}`}
               >
                 {getStatusIcon(currentStat)}
                 {currentStat}
               </span>
-
             )}
-            <div/>
-            
+
+            <div />
+
             <div className="task-item-actions">
               {currentStat !== 'Completed' && (
-                <FaRegCheckSquare 
-                className="check-button" 
-                onClick={(event) => {event.stopPropagation();
-                checkEvent(task.id);
+                <FaRegCheckSquare
+                  className="check-button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    checkEvent(task.id);
+                  }}
+                  title="Click to mark as 'Completed'"
+                />
+              )}
 
-              }}
-              title = "Click to mark as 'Completed'"
-              />
-            )}
-            
-                <button type="button" className="archive-button"
-                        onClick={(event) => {event.stopPropagation();
-                          archiveEvent(task.id)
-                        }}>
-                  Archive
-                </button>
-              </div>   
+              <button
+                type="button"
+                className="archive-button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  archiveEvent(task.id);
+                }}
+              >
+                Archive
+              </button>
+            </div>
           </div>
 
           <h3 className="task-item-title">
@@ -251,7 +255,10 @@ const TaskItem = ({ task }) => {
             <FaCalendarAlt />
 
             <span>
-              Due: {task.due_date ? formatDate(task.due_date) : 'No due date'}
+              Due:{' '}
+              {task.due_date
+                ? formatDate(task.due_date)
+                : 'No due date'}
             </span>
           </div>
         </div>
@@ -265,7 +272,6 @@ const TaskItem = ({ task }) => {
         </div>
       </div>
     </article>
-   
   );
 };
 

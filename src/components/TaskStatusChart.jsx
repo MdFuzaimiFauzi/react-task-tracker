@@ -1,32 +1,10 @@
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import "./TaskStatusChart.css";
 
-const TaskStatusChart = () => {
-  const [tasks, setTasks] = useState([]);
-  const svgRef = useRef(null);
-
-
-  
-    //fetch every 3 seconds, 3000 ms = 3s
-    useEffect(() => {
-        const fetchTasks = async () => {
-        const response = await fetch("/api/tasks");
-        const data = await response.json();
-
-        setTasks(data);
-        };
-
-        fetchTasks();
-
-        const interval = setInterval(fetchTasks, 3000);
-
-        return () => {
-        clearInterval(interval);
-        };
-    }, []);
-
-    const statusData = [
+const TaskStatusChart = ({ tasks = [] }) => {
+   const svgRef = useRef(null);
+   const statusData = [
         {
             status: "Not Start Yet",
             count: tasks.filter((task) => task.status === "Not Start Yet").length,
@@ -95,6 +73,7 @@ const TaskStatusChart = () => {
         .attr("fill", (d) => color(d.data.status))
         .attr("stroke", "white")
         .attr("stroke-width", "2px")
+
         //tooltip
         .on("mouseover", function (event, d) {
                 d3.select(this).attr("opacity", 0.7);
@@ -145,8 +124,7 @@ const TaskStatusChart = () => {
         .attr("cx", 0)
         .attr("cy", 0)
         .attr("r", 6)
-        .attr("fill", (d) => color(d.status))
-        .text((d) => d.status);
+        .attr("fill", (d) => color(d.status));
 
         legend
         .selectAll("text")
@@ -159,28 +137,6 @@ const TaskStatusChart = () => {
         .attr("font-size" , "12px")
         .text((d) => d.status);
         
-
-        //percentage label
-        // svg
-        // .selectAll(".chart-label")
-        // .data(arcs)
-        // .join("text")
-        // .attr("class", "chart-label")
-        // .attr("transform", (d) => {
-        //     const [x, y] = arc.centroid(d);
-
-        //     return `translate(${width / 2 + x}, ${height / 2 + y})`;
-        // })
-        // .attr("text-anchor", "middle")
-        // .attr("dominant-baseline", "middle")
-        // .text((d) => {
-        //     const percentage = (d.data.count / total) * 100;
-
-        //     return d.data.count === 0
-        //     ? ""
-        //     : `${Math.round(percentage)}%`;
-        // })
-
     }, [tasks]);
 
 
