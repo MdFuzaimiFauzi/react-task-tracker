@@ -71,7 +71,7 @@ const TaskCompletionTrend = () => {
     const marginBottom = 20;
     const marginLeft = 40;
 
-     //animation
+    //animation
     const sortedData = [...parsedCompletionData].sort((a, b) => a.date - b.date);
     
     const maxCount = d3.max(parsedCompletionData, (d) => d.count);
@@ -101,33 +101,63 @@ const TaskCompletionTrend = () => {
     const tooltip = d3.select(".completion-tooltip");
    
     const svg = d3.select(svgRef.current);
+    
     svg
         .attr("width", width)
         .attr("height", height)
     
-    svg.selectAll("*").remove()
-
+    //x-axis
     svg
-    .append("g")
-    .attr("transform", `translate(0, ${height - marginBottom})`)
-    .call(xAxis)
-    .selectAll("text")
-    .attr("transform", "rotate(0)")
-    .attr("text-anchor", "end");
+        .selectAll(".x-axis")
+        .data([null])
+        .join("g")
+        .attr("class","x-axis")
+        .attr("transform", `translate(0, ${height - marginBottom})`)
+        .call(xAxis)
+        .selectAll("text")
+        .attr("transform","rotate(0)")
+        .attr("text-anchor", "center");
 
+    //y-axis
     svg
-    .append("g")
-    .attr("transform", `translate(${marginLeft}, 0)`)
-    .call(yAxis);
+        .selectAll(".y-axis")
+        .data([null])
+        .join("g")
+        .attr("class", "y-axis")
+        .attr("transform", `translate(${marginLeft}, 0)`)
+        .call(yAxis);
 
+    //line
+    const path = svg
+        .selectAll(".completion-line")
+        .data([sortedData])
+        .join("path")
+        .attr("class", "completion-line")
+        .attr("fill", "none")
+        .attr("stroke", "lightgreen")
+        .attr("stroke-width", 2)
+        .attr("d", line);
+
+        const totalLength = path.node().getTotalLength();
+
+        path
+        .attr("stroke-dasharray", totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+        .duration(500)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+    
+    //circle
     const circles = svg
-    .selectAll("circle")
-    .data(sortedData)
-    .join("circle")
-    .attr("cx", (d) => xScale(d.date))
-    .attr("cy", (d) => yScale(d.count))
-    .attr("r", 4)
-    .attr("opacity", 0)
+        .selectAll(".completion-point")
+        .data(sortedData, (d) => d.date.getTime())
+        .join("circle")
+        .attr("class", "completion-point")
+        .attr("cx", (d) => xScale(d.date))
+        .attr("cy", (d) => yScale(d.count))
+        .attr("r", 4)
+        .attr("opacity", 0)
 
     .on("mouseover", (event, d) => {
         tooltip
@@ -146,23 +176,7 @@ const TaskCompletionTrend = () => {
         tooltip.style("display", "none");
     });
 
-        const path = svg
-        .append("path")
-        .datum(sortedData)
-        .attr("fill", "none")
-        .attr("stroke", "lightgreen")
-        .attr("stroke-width", 2)
-        .attr("d", line);
-
-        const totalLength = path.node().getTotalLength();
-
-        path
-        .attr("stroke-dasharray", totalLength)
-        .attr("stroke-dashoffset", totalLength)
-        .transition()
-        .duration(500)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
+       
     
 
     circles
