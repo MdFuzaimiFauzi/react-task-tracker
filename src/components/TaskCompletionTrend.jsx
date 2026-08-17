@@ -6,7 +6,6 @@ const TaskCompletionTrend = () => {
     const [data, setData] = useState([]);
     const svgRef = useRef();
 
-    useEffect(() => {
         const fetchTasks = async () => {
             try {
                 const res = await fetch("/api/tasks");
@@ -18,8 +17,30 @@ const TaskCompletionTrend = () => {
             }
             
         };
+
+    //initial fetch
+    useEffect(() => {
         fetchTasks();
     }, []);
+
+    //SSE listener
+    useEffect(() => {
+    const eventSource = new EventSource("/api/events");
+
+    eventSource.addEventListener("tasks-changed", () => {
+        console.log("SSE: Task Completion Trend updated");
+
+        fetchTasks();
+    });
+
+    eventSource.onerror = (error) => {
+        console.error("SSE error:", error);
+    };
+
+    return () => {
+        eventSource.close();
+    };
+}, []);
 
     const completedTasks = data.filter((task) => task.status === "Completed" && task.completed_at);
 
@@ -42,7 +63,7 @@ const TaskCompletionTrend = () => {
     useEffect(() => {
     if (parsedCompletionData.length === 0) return;
 
-    const width = 150;
+    const width = 400;
     const height = 150;
 
     const marginTop = 20;
@@ -59,22 +80,20 @@ const TaskCompletionTrend = () => {
         .domain(d3.extent(parsedCompletionData, (d) => d.date))
         .range([marginLeft, width - marginRight]);
 
-    const startPoint = sortedData[0];
-    const segments = sortedData.slice(1).map((targetPoint) => [startPoint, targetPoint])
-    
     const yScale = d3
         .scaleLinear()
         .domain([0, maxCount])
+        .nice()
         .range([height - marginBottom, marginTop]);
 
     const xAxis = d3
         .axisBottom(xScale)
-        .ticks(d3.timeDay.every(1))
-        .tickFormat(d3.timeFormat("%m-%d"));
+        .ticks(5)
+        .tickFormat(d3.timeFormat("%d-%m"));
     
     const yAxis = d3
         .axisLeft(yScale)
-        .ticks(maxCount)
+        .ticks(5)
         .tickFormat(d3.format("d"));
 
     const line = d3.line().x((d) => xScale(d.date)).y((d) => yScale(d.count));
@@ -93,7 +112,7 @@ const TaskCompletionTrend = () => {
     .attr("transform", `translate(0, ${height - marginBottom})`)
     .call(xAxis)
     .selectAll("text")
-    .attr("transform", "rotate(-45)")
+    .attr("transform", "rotate(0)")
     .attr("text-anchor", "end");
 
     svg
@@ -127,13 +146,11 @@ const TaskCompletionTrend = () => {
         tooltip.style("display", "none");
     });
 
-    //segments
-    segments.forEach((segment) => {
         const path = svg
         .append("path")
-        .datum(segment)
+        .datum(sortedData)
         .attr("fill", "none")
-        .attr("stroke", "cyan")
+        .attr("stroke", "lightgreen")
         .attr("stroke-width", 2)
         .attr("d", line);
 
@@ -146,23 +163,37 @@ const TaskCompletionTrend = () => {
         .duration(500)
         .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0);
-    })
+    
 
     circles
     .transition()
     .delay(350)
     .duration(300)
+    .attr("fill", "white")
     .attr("opacity", 1);
 
 }, [parsedCompletionData]);
 
 
     return (
-        <div className="task-completion-trend">
-            <svg ref={svgRef} width="100%" height="180"></svg>
-            <div className="completion-tooltip"></div>
-        </div>
-    );
+    <div className="task-completion-trend">
+        {parsedCompletionData.length === 0 ? (
+            <p className="no-completed-task">
+                No completed task yet
+            </p>
+        ) : (
+            <>
+                <svg
+                    ref={svgRef}
+                    width="400"
+                    height="180"
+                ></svg>
+
+                <div className="completion-tooltip"></div>
+            </>
+        )}
+    </div>
+);
 };
 
 export default TaskCompletionTrend;

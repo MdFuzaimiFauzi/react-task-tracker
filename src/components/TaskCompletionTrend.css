@@ -21,4 +21,12 @@
 }
 
 
+.no-completed-task {
+    height: 120px;
+    margin: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 

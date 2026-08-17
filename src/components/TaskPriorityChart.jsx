@@ -50,6 +50,7 @@ const TaskPriorityChart = ({ tasks = [] }) => {
     const yScale = d3
       .scaleLinear()
       .domain([0, maxCount])
+      .nice()
       .range([height - marginBottom, marginTop]);
 
     // Remove previous tooltip before creating a new one
@@ -132,7 +133,7 @@ const TaskPriorityChart = ({ tasks = [] }) => {
 
     const yAxis = d3
   .axisLeft(yScale)
-  .ticks(maxCount)
+  .ticks(5)
   .tickFormat(d3.format("d"));
 
     svg
