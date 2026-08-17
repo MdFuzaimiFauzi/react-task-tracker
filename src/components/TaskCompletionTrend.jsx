@@ -50,12 +50,18 @@ const TaskCompletionTrend = () => {
     const marginBottom = 20;
     const marginLeft = 40;
 
+     //animation
+    const sortedData = [...parsedCompletionData].sort((a, b) => a.date - b.date);
+    
     const maxCount = d3.max(parsedCompletionData, (d) => d.count);
 
     const xScale = d3.scaleTime()
         .domain(d3.extent(parsedCompletionData, (d) => d.date))
         .range([marginLeft, width - marginRight]);
 
+    const startPoint = sortedData[0];
+    const segments = sortedData.slice(1).map((targetPoint) => [startPoint, targetPoint])
+    
     const yScale = d3
         .scaleLinear()
         .domain([0, maxCount])
@@ -74,7 +80,7 @@ const TaskCompletionTrend = () => {
     const line = d3.line().x((d) => xScale(d.date)).y((d) => yScale(d.count));
     
     const tooltip = d3.select(".completion-tooltip");
-
+   
     const svg = d3.select(svgRef.current);
     svg
         .attr("width", width)
@@ -95,21 +101,14 @@ const TaskCompletionTrend = () => {
     .attr("transform", `translate(${marginLeft}, 0)`)
     .call(yAxis);
 
-    svg
-    .append("path")
-    .datum(parsedCompletionData)
-    .attr("fill", "none")
-    .attr("stroke", "cyan")
-    .attr("stroke-width", 2)
-    .attr("d", line);
-
-    svg
+    const circles = svg
     .selectAll("circle")
-    .data(parsedCompletionData)
+    .data(sortedData)
     .join("circle")
     .attr("cx", (d) => xScale(d.date))
     .attr("cy", (d) => yScale(d.count))
     .attr("r", 4)
+    .attr("opacity", 0)
 
     .on("mouseover", (event, d) => {
         tooltip
@@ -127,6 +126,33 @@ const TaskCompletionTrend = () => {
     .on("mouseout", () => {
         tooltip.style("display", "none");
     });
+
+    //segments
+    segments.forEach((segment) => {
+        const path = svg
+        .append("path")
+        .datum(segment)
+        .attr("fill", "none")
+        .attr("stroke", "cyan")
+        .attr("stroke-width", 2)
+        .attr("d", line);
+
+        const totalLength = path.node().getTotalLength();
+
+        path
+        .attr("stroke-dasharray", totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+        .duration(500)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+    })
+
+    circles
+    .transition()
+    .delay(350)
+    .duration(300)
+    .attr("opacity", 1);
 
 }, [parsedCompletionData]);
 
