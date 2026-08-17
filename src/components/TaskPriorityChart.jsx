@@ -4,7 +4,7 @@ import "./TaskPriorityChart.css";
 
 const TaskPriorityChart = ({ tasks = [] }) => {
   const svgRef = useRef(null);
- 
+
   const priorityData = [
     {
       priority: "Urgent",
@@ -25,10 +25,8 @@ const TaskPriorityChart = ({ tasks = [] }) => {
   ];
 
   useEffect(() => {
-    if (tasks.length === 0) return;
-
-    const width = 400;
-    const height = 160;
+    const width = 370;
+    const height = 150;
 
     const marginTop = 5;
     const marginBottom = 30;
@@ -37,30 +35,42 @@ const TaskPriorityChart = ({ tasks = [] }) => {
 
     const svg = d3.select(svgRef.current);
 
-    const maxCount = d3.max(priorityData, (d) => d.count) || 1;
+    svg
+      .attr("width", width)
+      .attr("height", height);
 
-    // X scale
+    const maxCount =
+      d3.max(priorityData, (d) => d.count) || 1;
+
+    // -------------------------
+    // X Scale
+    // -------------------------
+
     const xScale = d3
       .scaleBand()
       .domain(priorityData.map((d) => d.priority))
       .range([marginLeft, width - marginRight])
       .padding(0.3);
 
-    // Y scale
+    // -------------------------
+    // Y Scale
+    // -------------------------
+
     const yScale = d3
       .scaleLinear()
       .domain([0, maxCount])
       .nice()
       .range([height - marginBottom, marginTop]);
 
-    // Remove previous tooltip before creating a new one
-    d3.select(".priority-chart")
-      .selectAll(".chart-tooltip")
-      .remove();
+    // -------------------------
+    // Tooltip
+    // -------------------------
 
     const tooltip = d3
       .select(".priority-chart")
-      .append("div")
+      .selectAll(".chart-tooltip")
+      .data([null])
+      .join("div")
       .attr("class", "chart-tooltip");
 
     // -------------------------
@@ -69,22 +79,36 @@ const TaskPriorityChart = ({ tasks = [] }) => {
 
     const bars = svg
       .selectAll(".priority-bar")
-      .data(priorityData, (d) => d.priority);
+      .data(priorityData, (d) => d.priority)
+      .join(
+        // ENTER
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "priority-bar")
+            .attr("x", (d) => xScale(d.priority))
+            .attr("width", xScale.bandwidth())
+            .attr("y", height - marginBottom)
+            .attr("height", 0),
+
+        // UPDATE
+        (update) => update,
+
+        // EXIT
+        (exit) =>
+          exit
+            .transition()
+            .duration(300)
+            .attr("y", height - marginBottom)
+            .attr("height", 0)
+            .remove()
+      );
+
+    // -------------------------
+    // Bar Attributes + Events
+    // -------------------------
 
     bars
-      .join(
-        (enter) =>
-            enter
-            .append("rect")
-        .attr("class", "priority-bar")
-        .attr("x", (d) => xScale(d.priority))
-        .attr("width", xScale.bandwidth())
-        .attr("y", height - marginBottom)
-        .attr("height", 0),
-
-        (update) => update)
-        
-      .attr("class", "priority-bar")
       .attr("x", (d) => xScale(d.priority))
       .attr("width", xScale.bandwidth())
       .attr("fill", (d) => {
@@ -114,36 +138,49 @@ const TaskPriorityChart = ({ tasks = [] }) => {
         d3.select(this).attr("opacity", 1);
 
         tooltip.style("display", "none");
-      })
+      });
+
+    // -------------------------
+    // Bar Animation
+    // -------------------------
+
+    bars
+      .interrupt()
       .transition()
       .duration(700)
       .attr("y", (d) => yScale(d.count))
       .attr(
         "height",
-        (d) => height - marginBottom - yScale(d.count)
+        (d) =>
+          height -
+          marginBottom -
+          yScale(d.count)
       );
 
     // -------------------------
-    // Count labels
+    // Y Axis
     // -------------------------
 
-    const labels = svg
-      .selectAll(".count-label")
-      .data(priorityData, (d) => d.priority);
-
     const yAxis = d3
-  .axisLeft(yScale)
-  .ticks(5)
-  .tickFormat(d3.format("d"));
+      .axisLeft(yScale)
+      .ticks(5)
+      .tickFormat(d3.format("d"));
 
     svg
-    .selectAll(".y-axis")
-    .data([null])
-    .join("g")
-    .attr("class", "y-axis")
-    .attr("transform", `translate(${marginLeft}, 0)`)
-    .attr("color", "white")
-    .call(yAxis);
+      .selectAll(".y-axis")
+      .data([null])
+      .join("g")
+      .attr("class", "y-axis")
+      .attr(
+        "transform",
+        `translate(${marginLeft}, 0)`
+      )
+      .attr("color", "white")
+      .call(yAxis);
+
+    // -------------------------
+    // X Axis
+    // -------------------------
 
     const xAxis = d3.axisBottom(xScale);
 
@@ -163,11 +200,7 @@ const TaskPriorityChart = ({ tasks = [] }) => {
 
   return (
     <div className="priority-chart">
-      <svg
-        ref={svgRef}
-        width="370"
-        height="150"
-      />
+      <svg ref={svgRef}></svg>
     </div>
   );
 };
