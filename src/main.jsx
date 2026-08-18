@@ -7,7 +7,7 @@ import './index.css';
 const rootElement = document.getElementById('root');
 
 createRoot(rootElement).render(
-  <StrictMode>
+  // <StrictMode>
     <App />
-  </StrictMode>
+  // </StrictMode>
 );
